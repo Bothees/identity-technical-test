@@ -21,9 +21,7 @@ public class TestContext {
     }
 
     public void loadProperties(String browser) {
-
         properties = new Properties();
-
         try {
             inputStream = new FileInputStream("src/test/resources/test.properties");
             properties.load(inputStream);

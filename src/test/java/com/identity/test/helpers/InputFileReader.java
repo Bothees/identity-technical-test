@@ -27,14 +27,12 @@ public class InputFileReader {
         File directoryPath = new File(System.getProperty("user.dir") + "/src/test/resources/inputs");
         //List of all files and directories
         File filesList[] = directoryPath.listFiles();
-        System.out.println("List of files and directories in the specified directory:");
         for(File file : filesList) {
             try (BufferedReader bf = new BufferedReader(new FileReader(file))) {
                 while((line = bf.readLine()) !=null) {
                     Matcher m = p.matcher(line);
                     while(m.find()) {
                         regNumbers.add(m.group());
-                        //System.out.println(m.group());
                     }
                 }
 

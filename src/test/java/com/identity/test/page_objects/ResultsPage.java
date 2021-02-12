@@ -15,9 +15,7 @@ public class ResultsPage extends BasePage {
         String locator = "//div[5]/div[1]/div/span/div[2]/dl[%d]";
         for (int i = 1; i < 6; i++) {
             WebElement element = BasePage.driver.findElement(By.xpath(String.format(locator, i)));
-            output.put(element.findElement(By.tagName("dt")).getText(), element.findElement(By.tagName("dd")).getText());
-            System.out.println(element.findElement(By.tagName("dt")).getText());
-            System.out.println(element.findElement(By.tagName("dd")).getText());
+            output.put(element.findElement(By.tagName("dt")).getText().toUpperCase(), element.findElement(By.tagName("dd")).getText());
         } return output;
     }
 }

@@ -1,6 +1,7 @@
 package com.identity.test.helpers;
 
 import com.sun.xml.internal.xsom.impl.scd.Iterators;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,19 +32,14 @@ public class OutputFileReader {
                 throw new IOException("Problem with reading files");
             }
         }
+        expectedResults.forEach(System.out::println);
         return expectedResults;
     }
 
     public Map<String,String> constructOutput(String[] keys, String[] values){
         Map<String,String> output = new HashMap<>();
         for (int i=0; i<keys.length; i++){
-            output.put(keys[i],values[i]);
+            output.put(StringUtils.capitalize(keys[i]),values[i]);
         }return output;
-    }
-
-    public static void main(String[] args) throws IOException {
-        OutputFileReader outputTest = new OutputFileReader();
-        outputTest.readOutputFile();
-
     }
 }

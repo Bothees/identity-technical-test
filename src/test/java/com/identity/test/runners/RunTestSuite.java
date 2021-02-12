@@ -13,12 +13,12 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 
 public class RunTestSuite extends BasePage {
@@ -33,8 +33,9 @@ public class RunTestSuite extends BasePage {
     @Test
     public void testRunner() throws IOException {
         List<String> regNumbers = inputFileReader.readInputFile();
-        List<Map<String,String>> actualResults= new ArrayList<>();
-
+        Map<String,String> actualResults= new HashMap<>();
+        List<Map<String,String>> expectedResults = outputFileReader.readOutputFile();
+        Map<String,String> temp = new HashMap<>();
 
         for(String number: regNumbers){
             getDriver().navigate().to(testContext.getProperty("base.url"));
@@ -42,30 +43,20 @@ public class RunTestSuite extends BasePage {
             freeCarCheckPage.clickFreeCarCheckButton();
             if(isAlertPresent()){
                 String alertText = BasePage.driver.switchTo().alert().getText();
+                System.out.println("Car details not found for" +number);
                 BasePage.driver.switchTo().alert().accept();
             }else {
-                actualResults.add(resultsPage.getResults());
+                actualResults = resultsPage.getResults();
+                for(int i=0; i<expectedResults.size();i++){
+                    if (expectedResults.get(i).containsValue(number)){
+                        temp = expectedResults.get(i);
+                    }
+                }
+                assertThat(actualResults.entrySet(), both(everyItem(isIn(temp.entrySet()))).and(containsInAnyOrder(temp.entrySet().toArray())));
+                }
             }
         }
-        List<Map<String,String>> expectedResults = outputFileReader.readOutputFile();
-        for (int i=expectedResults.size()-1; i>=0 ;i--) {
-            if (actualResults.get(i).containsKey("Registration")) {
-                assertThat("Registration number is not found ", actualResults.get(i).get("Registration"), is(expectedResults.get(i).get("Registration".toUpperCase())));
-            }
-            if (actualResults.get(i).containsKey("Make")) {
-                assertThat("Make  is not found ", actualResults.get(i).get("Make"), is(expectedResults.get(i).get("Make").toUpperCase()));
-            }
-            if (actualResults.get(i).containsKey("Model")) {
-                assertThat("Model is not found ", actualResults.get(i).get("Model"), is(expectedResults.get(i).get("Model").toUpperCase()));
-            }
-            if (actualResults.get(i).containsKey("Colour")) {
-                assertThat("Colour is not found ", actualResults.get(i).get("Colour"), is(expectedResults.get(i).get("Colour").toUpperCase()));
-            }
-            if (actualResults.get(i).containsKey("Year")) {
-                assertThat("Year is not found ", actualResults.get(i).get("Year"), is(expectedResults.get(i).get("Year").toUpperCase()));
-            }
-        }
-    }
+
 
     @BeforeClass
     public static void setupDriver(){
